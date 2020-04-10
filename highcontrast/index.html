@@ -1,0 +1,73 @@
+<html>
+	<head>
+		<title>High contrast reference map layer</title>
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+		<script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js?2"></script>
+		<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+		<style>
+			#map { height: 100%; }
+			#zoomlevel,#latlong,#togglelabel{position:absolute;z-index:1000; background:white;padding:5px;left:15px; }
+			#zoomlevel {top:80px; }
+			#latlong {top: 95%; font-size:12px; opacity:0.5;}
+			#togglelabel{left: 50px; top:18px;}
+		</style>
+	</head>
+	<body>
+			
+		<button id="togglelabel">Labels Off</button>		
+		<div id="latlong">xx.xxx,222.333</div>		
+		<div id="map" />
+		<div id="zoomlevel" />	
+		
+		
+		<script>
+		$( document ).ready(function() {
+			var map = L.map('map').setView([-27.85, 134.73], 5);
+			var url = 'http://wdev.bom.gov.au:50018/water/maps/highcontrast/{z}/{x}/{y}.png';
+			var url2 = 'http://wdev.bom.gov.au:50018/water/maps/highcontrast_nolabels/{z}/{x}/{y}.png';
+			
+			var hc = L.tileLayer(url, {
+				attribution: 'Data copyright Openstreetmap and contributors.',
+				maxZoom: 10
+			}).addTo(map);
+
+			var hc_noLabels = L.tileLayer(url2, {
+				attribution: 'Data copyright Openstreetmap and contributors.',
+				maxZoom: 10
+			});
+
+			var i = 0;
+			function updateZoom() {				
+				$("#zoomlevel").text(map.getZoom());			
+			}
+
+			function updateLatlong() {				
+				$("#latlong").text("Tiles: " + url + "  | Center= " + map.getCenter());			
+			}
+
+			var labeltoggle = false;
+			function toggleLabels() {
+				if (labeltoggle == false) {
+					labeltoggle = true; 
+					$("#togglelabel").text("Labels On");
+					map.removeLayer(hc);
+					map.addLayer(hc_noLabels);
+				} else {
+					labeltoggle = false; $
+					("#togglelabel").text("Labels Off");
+					map.removeLayer(hc_noLabels);
+					map.addLayer(hc);
+				}
+			}
+
+			$("#togglelabel").click(toggleLabels);
+			
+			map.on('zoomend', updateZoom);
+			map.on('moveend', updateLatlong);
+			updateZoom();
+			updateLatlong();	
+		
+		}); // end document ready
+		</script>
+	</body>
+</html>
